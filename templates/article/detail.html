@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}{{ article.title }}{% endblock title %}
+</head>
+<body>
+    <!-- 写入 base.html 中定义的 content -->
+    {% block content %}
+        <!-- 定义放置文章标题的div容器 -->
+        <div class="container">
+            <div class="row mt-2">
+                    <!-- 文章内容 -->
+                    <div class="col-9 mb-2">
+                    <!-- 卡片容器 -->
+                        <div class="card shadow-sm p-3 mb-3 bg-white rounded" style="width:100%;">
+                          <div class="card-body">
+                            <h1 class="card-title">{{ article.title }}</h1>
+                            <p class="card-text text-black-50">作者：{{ article.author}}&nbsp;&nbsp;&nbsp;&nbsp;时间：{{ article.created|date:'Y-m-d'}}&nbsp;&nbsp;&nbsp;&nbsp;阅读量：{{ article.total_views}}&nbsp;&nbsp;&nbsp;&nbsp;
+                                <!-- 判断用户是否是作者本人，来判断是否显示删除和编辑 -->
+                                {% if user == article.author %}
+                                <a href="#" onclick="confirm_safe_delete()">删除文章</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a href="{% url 'article:article_update' article.id%}">编辑文章</a>
+                                {% endif %}
+                            </p>
+                            <!-- 空的post表单 -->
+                            <form
+                                style="display: none"
+                                id="safe_delete"
+                                action="{% url 'article:article_safe_delete' article.id %}"
+                                method="POST"
+                            >
+                                {% csrf_token %}
+                                <button type="submit">发送</button>
+                            </form>
+                            <p class="card-text">{{ article.body|safe}}</p>
+                          </div>
+                        </div>
+                        <div class="card shadow-sm p-3 mb-5 bg-white rounded" style="width:100%;">
+                          <div class="card-body">
+                              {% if user.is_authenticated %}
+                                  <form action="{% url 'comment:comment_post' article.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="comment_body"><h5>发表评论</h5></label>
+                                        <textarea class="form-control" id="comment_body" rows="3" name="body" placeholder="写下你的评论……"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">发布</button>
+                                  </form>
+                              {% else %}
+                                  <form action="{% url 'comment:comment_post' article.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="comment_body"><h5>发表评论</h5></label>
+                                        <textarea class="form-control" id="comment_body" rows="3" name="body" placeholder="写下你的评论……"></textarea>
+                                    </div>
+                                    <a class="btn btn-primary" href="{% url 'userprofile:login' %}" role="button">发布</a>
+                                  </form>
+                              {% endif %}
+                              <br>
+                              <br>
+                              <h5>全部评论&nbsp;{{ comments.count }}</h5>
+                              <br>
+                              {% for comment in comments %}
+                                  <h5 class="text-black-50">{{ comment.user }}</h5>
+                                  <p class="text-black-50">{{ comment.created|date:"Y-m-d H:i:s" }}</p>
+                                  <h5 class="text-left">{{ comment.body }}</h5>
+                                  <hr>
+                              {% endfor %}
+                          </div>
+                        </div>
+                    </div>
+                    <!--  侧边文章目录 -->
+                    <div class="col-3 mb-2">
+                        <div class="card bg-light mb-3" style="max-width: 20rem;">
+                          <div class="card-header">目录</div>
+                          <div class="card-body">
+                            <p class="card-text">{{ toc|safe }}</p>
+                          </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <script>
+            // 删除文章的函数
+            function confirm_safe_delete() {
+                // 调用layer弹窗组件
+                layer.open({
+                    title: "确认删除",
+                    content: "确认删除这篇文章吗？",
+                    yes: function (index, layero) {
+                        $('form#safe_delete button').click();
+                        layer.close(index);
+                    },
+                })
+            }
+        </script>
+    {% endblock content %}
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- 定义导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container justify-content-center">
+                <div class="row col-12">
+                    <a class="navbar-brand" href="">
+                        <img src="/media/brand/我皮网logo.png " width="48" height="48" class="d-inline-block align-bottom" alt="www.52pypi.com">
+                        &nbsp;<h3 class="d-inline-block" style="color: #ff9898">我皮网</h3>
+                    </a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto">
+                          <li class="nav-item">
+                            <a class="nav-link" href="{% url 'article:article_list' %}" style="font-size: 100%">文章</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="#">关于</a>
+                          </li>
+                        </ul>
+                        <ul class="navbar-nav mr-2">
+                          <form class="form-inline my-2 my-lg-0 mr-2">
+                            <input class="form-control mr-sm-2" type="search" placeholder="输入关键词……" aria-label="Search" name="search">
+                          </form>
+                          {% if user.is_authenticated %}
+                              <div class="dropdown">
+                                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ user.username }}
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{% url 'article:article_create' %}">写文章</a>
+                                    <a class="dropdown-item" href="{% url 'userprofile:edit' user.id %}">用户信息</a>
+                                    <a class="dropdown-item" href="{% url 'userprofile:logout' %}">退出登录</a>
+                                  </div>
+                              </div>
+                          {% else %}
+                              <li class="nav-item">
+                                <a class="nav-link" href="{% url 'userprofile:login' %}">登录</a>
+                              </li>
+                          {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+</body>
+</html>
