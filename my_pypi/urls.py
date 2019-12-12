@@ -18,9 +18,11 @@ from django.urls import path, include
 # 不太懂这引入的模块
 from django.conf import settings
 from django.conf.urls.static import static
+from article.views import article_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', article_list, name='home'),
     path('article/', include('article.urls', namespace='article')),
     path('userprofile/', include('userprofile.urls', namespace='userprofile')),
     path('comment/', include('comment.urls', namespace='comment')),
