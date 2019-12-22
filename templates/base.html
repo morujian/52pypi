@@ -11,15 +11,21 @@
     <title>{% block title %}{% endblock title %}</title>
     <!--引入bootstrap的css文件-->
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-     <!--引入代码高亮的monokai.css文件-->
+    <!--引入代码高亮的monokai.css文件-->
     <link rel="stylesheet" href="{% static 'md_css/monokai.css' %}">
+    <!--引入fontawesome字体图标-->
+    <link rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    >
 </head>
-<body>
+<body class="bg-light">
     <!-- 引入导航栏 -->
     {% include 'header.html' %}
     <!-- 预留具体页面的位置 -->
     {% block content %}{% endblock content %}
-    <!-- 引入注脚 -->
+    <!-- 引入页脚 -->
     {% include 'footer.html' %}
     <!-- bootstrap.js 依赖 jquery.js 和popper.js，因此在这里引入 -->
     <script src="{% static 'jquery/jquery-3.4.1.js' %}"></script>

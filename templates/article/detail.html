@@ -35,9 +35,15 @@
                                 {% csrf_token %}
                                 <button type="submit">发送</button>
                             </form>
+                            <!-- 标题图 -->
+                            {% if article.avatar %}
+                                <img src="{{ article.avatar.url }}" style="max-width: 50%">
+                            {% endif %}
+                            <!-- 文章内容 -->
                             <p class="card-text">{{ article.body|safe}}</p>
                           </div>
                         </div>
+                        <!-- 文章评论 -->
                         <div class="card shadow-sm p-3 mb-5 bg-white rounded" style="width:100%;">
                           <div class="card-body">
                               {% if user.is_authenticated %}

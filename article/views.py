@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 # 导入数据模型类
-from .models import ArticlePost, User
+from .models import ArticlePost, ArticleColumn, User
 # 导入markdown
 import markdown
 # 导入表单类
@@ -23,21 +23,22 @@ from django.utils.html import strip_tags
 def article_list(request):  # 文章列表
     search = request.GET.get('search')
     order = request.GET.get('order')
+    column = request.GET.get('column')
     if search:
         if order == 'total_views':
             article_all = ArticlePost.objects.filter(
-                Q(title__icontains=search) | Q(body__icontains=search)
+                Q(title__icontains=search) | Q(body__icontains=search) | Q(column_id=column)
             ).order_by('-total_views')
         else:
             article_all = ArticlePost.objects.filter(
-                Q(title__icontains=search) | Q(body__icontains=search)
+                Q(title__icontains=search) | Q(body__icontains=search) | Q(column_id=column)
             )
     else:
         search = ''
         if order == 'total_views':
-            article_all = ArticlePost.objects.all().order_by('-total_views')
+            article_all = ArticlePost.objects.filter(column_id=column).order_by('-total_views')
         else:
-            article_all = ArticlePost.objects.all()
+            article_all = ArticlePost.objects.filter(column_id=column)
     md = markdown.Markdown(extensions=[
         # 包含缩写、表格等常用扩展
         'markdown.extensions.extra',
@@ -49,8 +50,8 @@ def article_list(request):  # 文章列表
     articles = paginator.get_page(page)
     for article in articles:
         article.body = strip_tags(md.convert(article.body))
-
-    context = {'articles': articles, 'order': order, 'search': search}
+    columns = ArticleColumn.objects.all()
+    context = {'articles': articles, 'columns': columns, 'order': order, 'search': search}
     return render(request, 'article/list.html', context)
 
 
@@ -90,6 +91,7 @@ def article_create(request):  # 撰写文章
         if article_post_form.is_valid():
             # 将表单数据保存生成一条新的数据对象，但是并不提交
             new_article = article_post_form.save(commit=False)
+            new_article.author = request.user
             new_article.save()
             return redirect('article:article_list')
         else:
@@ -97,7 +99,8 @@ def article_create(request):  # 撰写文章
     else:
         article_post_form = ArticlePostForm()
         authors = User.objects.all()
-        context = {'article_post_form': article_post_form, 'authors': authors}
+        columns = ArticleColumn.objects.all()
+        context = {'article_post_form': article_post_form, 'columns': columns, 'authors': authors}
         return render(request, 'article/create.html', context)
 
 
@@ -115,20 +118,27 @@ def article_safe_delete(request, id):  # 删除文章
 
 @login_required(login_url='/userprofile/login/')
 def article_update(request, id):  # 更新文章
+    article = ArticlePost.objects.get(id=id)
     if request.method == 'POST':
-        article_post_form = ArticlePostForm(data=request.POST)
+        article_post_form = ArticlePostForm(request.POST, request.FILES)
         if article_post_form.is_valid():
-            new_article = article_post_form.save()
+            article_cd = article_post_form.cleaned_data
+            article.title = article_cd['title']
+            article.column = article_cd['column']
+            article.body = article_cd['body']
+            if 'avatar' in request.FILES:
+                article.avatar = article_cd['avatar']
+            article.save()
             return redirect('article:article_detail', id=id)
         else:
             return HttpResponse('提交的数据有误')
     else:
-        article = ArticlePost.objects.get(id=id)
         if request.user != article.author:  # 验证是否是作者本人操作
             return HttpResponse('您无权做此操作')
         article_dict = ArticlePost.objects.get(id=id).__dict__
         article_post_form = ArticlePostForm(article_dict)
         authors = User.objects.all()
-        context = {'article_post_form': article_post_form, 'authors': authors, 'article': article}
+        columns = ArticleColumn.objects.all()
+        context = {'article_post_form': article_post_form, 'authors': authors, 'columns': columns, 'article': article}
         return render(request, 'article/update.html', context)
 

@@ -24,10 +24,10 @@
                         <input type="file" class="form-control-file" id="avatar" name="avatar">
                       </div>
                       <div class="form-group">
-                        <label for="author">作者</label>
-                        <select class="form-control" id="author" name="author">
-                            {% for author in authors %}
-                              <option value="{{ author.id }}">{{ author.username }}</option>
+                        <label for="author">文章分类</label>
+                        <select class="form-control" id="column" name="column">
+                            {% for column in columns %}
+                              <option value="{{ column.id }}">{{ column.title }}</option>
                             {% endfor %}
                         </select>
                       </div>
