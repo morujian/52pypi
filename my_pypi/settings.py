@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'userprofile',
     'comment',
     'mdeditor',
+    'ckeditor',
     'password_reset',
-    'imagekit'
+    'imagekit',
+    'taggit'
 ]
 
 MIDDLEWARE = [
@@ -79,12 +81,31 @@ WSGI_APPLICATION = 'my_pypi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            # 'ENGINE': 'django.db.backends.sqlite3',
+            # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'my_pypi',
+            'USER': 'root',
+            'PASSWORD': 'leiwen646',
+            'HOST': 'localhost',
+            'PORT': 3306,
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'my_pypi',
+            'USER': 'root',
+            'PASSWORD': 'leiwen646',
+            'HOST': '120.24.243.190',
+            'PORT': 3306,
+        }
+    }
 
 
 # Password validation
@@ -188,6 +209,38 @@ MDEDITOR_CONFIGS = {
         },
 
 }
+
+# ckeditor富文本编辑器配置
+CKEDITOR_CONFIGS = {
+    # django-ckeditor默认使用default配置
+    'default': {
+        # 编辑器宽度自适应
+        'width':'auto',
+        'height':'120px',
+        # tab键转换空格数
+        'tabSpaces': 4,
+        # 工具栏风格
+        'toolbar': 'Custom',
+        # 工具栏按钮
+        'toolbar_Custom': [
+            # 表情 代码块
+            ['Smiley', 'CodeSnippet'],
+            # 字体风格
+            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+            # 字体颜色
+            ['TextColor', 'BGColor'],
+            # 链接
+            ['Link', 'Unlink'],
+            # 列表
+            ['NumberedList', 'BulletedList'],
+            # 最大化
+            ['Maximize']
+        ],
+        # 加入代码块插件
+        'extraPlugins': ','.join(['codesnippet', 'prism', 'widget', 'lineutils']),
+    }
+}
+
 
 # SMTP服务器，改为你的邮箱的smtp!
 EMAIL_HOST = 'smtp.qq.com'

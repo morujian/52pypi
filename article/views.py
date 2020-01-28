@@ -16,6 +16,10 @@ from django.db.models import Q
 from comment.models import Comment
 # strip_tags去掉html文本的全部HTML标签
 from django.utils.html import strip_tags
+# 导入CommentForm
+from comment.forms import CommentForm
+# 导入标签模型
+from taggit.models import Tag
 
 # Create your views here.
 
@@ -24,21 +28,30 @@ def article_list(request):  # 文章列表
     search = request.GET.get('search')
     order = request.GET.get('order')
     column = request.GET.get('column')
+    tag = request.GET.get('tag')
+    # 初始化文章列表
+    article_all = ArticlePost.objects.all()
+
+    # 按搜索结果刷新文章列表
     if search:
-        if order == 'total_views':
-            article_all = ArticlePost.objects.filter(
-                Q(title__icontains=search) | Q(body__icontains=search) | Q(column_id=column)
-            ).order_by('-total_views')
-        else:
-            article_all = ArticlePost.objects.filter(
-                Q(title__icontains=search) | Q(body__icontains=search) | Q(column_id=column)
-            )
+        article_all = ArticlePost.objects.filter(Q(title__icontains=search) | Q(body__icontains=search))
     else:
         search = ''
-        if order == 'total_views':
-            article_all = ArticlePost.objects.filter(column_id=column).order_by('-total_views')
-        else:
-            article_all = ArticlePost.objects.filter(column_id=column)
+
+    # 文章排序
+    # if order == 'total_views':
+    #     article_all = ArticlePost.objects.all.order_by('-total_views')
+    # else:
+    #     article_all = ArticlePost.objects.all
+
+    # 按栏目刷新文章列表
+    if column is not None and column.isdigit():
+        article_all = ArticlePost.objects.filter(column=column)
+
+    # 按标签刷新文章列表
+    if tag and tag != 'None':
+        article_all = ArticlePost.objects.filter(tags__name__in=[tag])  # tags__name__in=[tag]的写法要注意哦
+
     md = markdown.Markdown(extensions=[
         # 包含缩写、表格等常用扩展
         'markdown.extensions.extra',
@@ -51,7 +64,8 @@ def article_list(request):  # 文章列表
     for article in articles:
         article.body = strip_tags(md.convert(article.body))
     columns = ArticleColumn.objects.all()
-    context = {'articles': articles, 'columns': columns, 'order': order, 'search': search}
+    tag = Tag.objects.all()  # 取到所有文章全部的标签
+    context = {'articles': articles, 'columns': columns, 'tag': tag, 'order': order, 'search': search}
     return render(request, 'article/list.html', context)
 
 
@@ -78,7 +92,8 @@ def article_detail(request, id):  # 文章内容
     article.save(update_fields=['total_views'])
     # 取出文章对应的评论
     comments = Comment.objects.filter(article_id=id)
-    context = {'article': article, 'toc': md.toc, 'comments': comments}
+    comment_form = CommentForm()
+    context = {'article': article, 'toc': md.toc, 'comments': comments, 'comment_form': comment_form}
     return render(request, 'article/detail.html', context)
 
 
@@ -93,6 +108,8 @@ def article_create(request):  # 撰写文章
             new_article = article_post_form.save(commit=False)
             new_article.author = request.user
             new_article.save()
+            # 保存标签的多对多的关系
+            article_post_form.save_m2m()
             return redirect('article:article_list')
         else:
             return HttpResponse('提交的数据有误，请重新提交')
@@ -125,6 +142,7 @@ def article_update(request, id):  # 更新文章
             article_cd = article_post_form.cleaned_data
             article.title = article_cd['title']
             article.column = article_cd['column']
+            article.tags = article_cd['tags']
             article.body = article_cd['body']
             if 'avatar' in request.FILES:
                 article.avatar = article_cd['avatar']

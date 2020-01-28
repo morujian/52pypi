@@ -8,8 +8,8 @@ from mdeditor.fields import MDTextField
 # 引入imagekit
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
-# 记得导入
-from django.urls import reverse
+# 引入django-taggit的TaggableManager
+from taggit.managers import TaggableManager
 
 
 # Create your models here.
@@ -48,6 +48,8 @@ class ArticlePost(models.Model):
         related_name='article',
         verbose_name='栏目'
     )
+    # 文章标签
+    tags = TaggableManager(blank=True)
     # 文章的正文，models.TextField保存大量文本，改用MDTextFied
     body = MDTextField(verbose_name='正文', config_name='form_config')
     # 文章的创建时间，default=timezone.now表示在创建数据时，自动写入当前时间

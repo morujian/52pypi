@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from article.views import article_list
+from my_pypi.feeds import LatestEntriesFeed
+from my_pypi.views import about
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +29,9 @@ urlpatterns = [
     path('userprofile/', include('userprofile.urls', namespace='userprofile')),
     path('comment/', include('comment.urls', namespace='comment')),
     path('password-reset/', include('password_reset.urls')),
-    path('mdeditor/', include('mdeditor.urls'))
+    path('mdeditor/', include('mdeditor.urls')),
+    path('latestfeed/', LatestEntriesFeed(), name='latestfeed'),
+    path('about/', about, name='about')
 ]
 # 不太懂这段代码，为上传的图片配置好url路径
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

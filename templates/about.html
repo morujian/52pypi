@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+         关于我
+    {% endblock title %}
+</head>
+<body>
+    {% block content %}
+        <div class="container">
+            <div class="row mt-2">
+                <div class="col-lg-12">
+                    <div class="card mb-3">
+                        <div class="row no-gutters justify-content-center">
+                          <div class="col-lg-4 mt-2 mb-2" style="max-width: 120px">
+                           <img src="/media/Avatar.jpg" class="card-img" alt="...">
+                          </div>
+                          <div class="col-lg-8">
+                              <div class="card-body">
+                                <h5 class="card-title">刘世路</h5>
+                                <p class="card-text text-muted">产品经理</p>
+                                <p class="card-text text-muted">做一款好的产品，写一本好的小说</p>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">为什么做这个博客？</li>
+                      <li class="list-group-item">Re：因为对编程比较感兴趣，并且最近学习了python，所以希望把学习到知识在实际项目中实践出来。因此做了这个博客网站。</li>
+                      <li class="list-group-item">博客主要分享的内容？</li>
+                      <li class="list-group-item">Re：目前在从事产品经理的工作，所以博客会分享一些自己对产品的思考，以及其他自己所学习到的知识。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endblock content %}
+</body>
+</html>

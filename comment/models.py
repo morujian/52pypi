@@ -1,6 +1,7 @@
 from django.db import models
 from article.models import ArticlePost
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -10,7 +11,8 @@ class Comment(models.Model):
     article = models.ForeignKey(ArticlePost, on_delete=models.CASCADE, related_name='comments')
     # ForeignKey是一对多，一个用户肯定是关联多个评论的
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
-    body = models.TextField(max_length=500)
+    # body字段换成ckeditor的RichTextField
+    body = RichTextField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

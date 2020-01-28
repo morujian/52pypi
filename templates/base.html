@@ -19,6 +19,7 @@
       integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
       crossorigin="anonymous"
     >
+    <link rel="stylesheet" href="{% static 'prism/prism-2.css' %}">
 </head>
 <body class="bg-light">
     <!-- 引入导航栏 -->
@@ -34,5 +35,8 @@
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <!-- 引入layer的js文件 -->
     <script src="{% static 'layer/layer.js' %}"></script>
+    <!-- 新增代码 -->
+    <script src="{% static 'ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js' %}"></script>
+    {% block script %}{% endblock script %}
 </body>
 </html>
