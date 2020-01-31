@@ -5,12 +5,19 @@
 <head>
     <meta charset="UTF-8">
     {% block title %}{{ article.title }}{% endblock title %}
+    <!-- 设置图片尺寸不超过自身尺寸，width和max-width的区别 -->
+    {% block style %}
+        <style type="text/css">
+            img{max-width:100%;height:auto;}
+        </style>
+    {% endblock style %}
 </head>
 <body>
     <!-- 写入 base.html 中定义的 content -->
     {% block content %}
         <!-- 定义放置文章标题的div容器 -->
-        <div class="container">
+        <!-- dowebok是viewer.js所需要的id -->
+        <div class="container" id="dowebok">
             <div class="row mt-2">
                     <!-- 文章内容 -->
                     <div class="col-lg-9 mb-2">
@@ -46,7 +53,7 @@
                                 <img src="{{ article.avatar.url }}" style="max-width: 50%">
                             {% endif %}
                             <!-- 文章内容 -->
-                            <p class="card-text">{{ article.body|safe}}</p>
+                            <p class="card-text" id="dowebok">{{ article.body|safe}}</p>
                           </div>
                         </div>
                         <!-- 文章评论 -->
@@ -112,12 +119,29 @@
                 })
             }
         </script>
+
         <!-- 删除ckeditor自带的样式 -->
         {% block script %}
             <script>
                 $(".django-ckeditor-widget").removeAttr('style');
             </script>
+
+{#            <script>#}
+{#            $(function(){#}
+{#                $('img').click(function(){#}
+{##}
+{#                $(this).toggleClass('max');#}
+{#                });#}
+{#                });#}
+{#            </script>#}
+
+            <script>
+                // viewer.js的javascript代码
+                var viewer = new Viewer(document.getElementById('dowebok'));
+            </script>
+
         {% endblock script %}
+
     {% endblock content %}
 </body>
 </html>

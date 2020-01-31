@@ -145,7 +145,7 @@ STATICFILES_DIRS = (
 STATIC_URL = '/static/'
 
 # 静态文件收集目录
-STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')  # STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
 # 媒体文件的路径
 MEDIA_URL = '/media/'
