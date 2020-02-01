@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=3vomxylbyj+n$lj-7vz$wlgy!tm2o1dl!b9!32uxl=02y+n0y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -148,8 +148,21 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')  # STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
 # 媒体文件的路径
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 阿里云OSS存储配置
+ACCESS_KEY_ID = "LTAI4Fv2ctYYtnAUeDqWCKih"
+ACCESS_KEY_SECRET = "DZ97kaPuLhu08daotES9hvuZcisxdJ"
+END_POINT = "oss-cn-shenzhen.aliyuncs.com"
+PREFIX_URL = 'http://'
+BUCKET_NAME = "52pypi"
+ALIYUN_OSS_CNAME = ""  # 自定义域名，如果不需要可以不填写
+BUCKET_ACL_TYPE = "public-read" # private, public-read, public-read-write
+DEFAULT_FILE_STORAGE = 'aliyun_oss2_storage.backends.AliyunMediaStorage'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = "media"
+
 
 # mdeditor markdown编辑器配置
 MDEDITOR_CONFIGS = {
